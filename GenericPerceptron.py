@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt 
+import numpy as np
 import random
 #Perceptron para porta AND, com o plus da variação poder ser positiva ou negativa 
 
@@ -66,13 +67,19 @@ class Perceptron():
 #p = Perceptron([-0.3, 0.5, 0.6],0,0.1)
 p = Perceptron([random.uniform(-1,1),random.uniform(-1,1),random.uniform(-1,1)],0,0.1)
 pOr = Perceptron([random.uniform(-1,1),random.uniform(-1,1),random.uniform(-1,1)],0,0.1)
+#pOr = Perceptron([-0.3, 0.5, 0.6],0,0.1)
 
 #for i in range(1, 10):
 #while p.TreinarEpoca(DataAnd) != 0:
  #   continue
 
 print("#####################################")
+print("Treinando And")
+while p.TreinarEpoca(DataAnd) != 0:
+    continue
 
+print("#####################################")
+print("Treinando OR")
 
 while pOr.TreinarEpoca(DataOR) != 0:
     continue
@@ -84,7 +91,30 @@ while pOr.TreinarEpoca(DataOR) != 0:
 # 1 ponto quanto x2 = 0
 # 
 
-x = [p.w[0], p.w[1]*1+p.w[0]]
-y = [p.w[2]*1+p.w[0] , p.w[0]]
-#plt.plot(x,y)
-#plt.show()
+#plot and
+xp1and = ((-1)*p.w[0]/p.w[1] )
+xp2and = ((-1)*p.w[0]/p.w[2] )
+
+pontosAnd = [[0,xp1and],[xp2and,0]]
+
+zand = np.polyfit(pontosAnd[0], pontosAnd[1], 1) #pega uma equacao para a reta
+pand = np.poly1d(zand) #a transforma em polinomial
+print(pand)
+plt.plot(pontosAnd, pand(pontosAnd), '-',label="and",color="blue")
+
+
+##plt or
+xp1 = ((-1)*pOr.w[0]/pOr.w[1] )
+xp2 = ((-1)*pOr.w[0]/pOr.w[2] )
+
+pontos = [[0,xp1],[xp2,0]]
+
+z = np.polyfit(pontos[0], pontos[1], 1) #pega uma equacao para a reta
+p = np.poly1d(z) #a transforma em polinomial
+print(p)
+plt.plot(pontos, p(pontos), '--',label="Or",color="red")
+
+
+plt.scatter([0,0,1,1],[0,1,0,1])
+plt.legend
+plt.show()
