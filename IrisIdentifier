@@ -27,69 +27,64 @@ plt.scatter(x2,y2,color = "blue")
 
 
 class Perceptron():
-    NumEpoch = 0
+    #w = [Bias,W1,W2]
     def __init__(self, w, threshold,variation):
      self.w = w
      self.threshold = threshold
      self.variation = variation
 
-    def TreinarEpoca(self,Data):
-        print("Epoch - " + str(self.NumEpoch))
-        ContCorrec = 0
-        for v in Data:
-          if  self.Calcular(v) == 1:
-              ContCorrec += 1
-        self.NumEpoch +=1
-        print("Valores Finais na Epoch  -- " + str(self.w))
-        print("---------------------------------")
-        return ContCorrec
-
+    def Treinar(self,Data): #Data = v[x,y,resultado]
+        print("Data - " + str(Data))
+        return self.Calcular(Data)
+        
     def Calcular(self,vet):
-        print(vet)
+       
+        print("Weights - " + str(self.w))
         func = self.w[0] + vet[0] * self.w[1] + vet [1] * self.w[2] #u         
-        print("  \"" + str(vet[0]) +"\" * \""  + str(self.w[1]) + "  \" " + str(vet[1]) +"\" * " + str(self.w[2]) + " + Bias " + str(self.w[0]) + " = " + str(func) ) 
+        print("Func Value - " + str(func)) 
         if func >= self.threshold:
-                func = 2
+            func = 1
         else:
-                func = 1
+            func = 0
+        erro = vet[2] - func    
         #func = 1/( 1 + np.exp(func))
-        if (func-1 == vet[2]) :
-            return 0 #se funcionar
-        else:
-            if func>=self.threshold:
-                func = 2
-            else:
-                func = 1
-            self.Corrigir(vet,  (vet[2]+1) - func )    
-            return 1 #se nao funcioanr
+        self.Corrigir(vet,erro)    
+        return erro #se nao funcioanr
 
     #Direction deve ser 1 para corrigir positivamento e -1 para corrigir negativamente
-    def  Corrigir(self,vet,erro):#variacao ajuste 
-        self.w[0] += self.variation * erro 
-        print("Variacao Bias - " + str(self.w[0]))
-       #if(vet[0] > 0 ):
-        self.w[1] += self.variation * erro* vet[0]
-        print("Variacao W1 - " + str(self.w[1])) 
-       # if(vet[1] > 0):
-        self.w[2] += self.variation * erro* vet[1]
-        print("Variacao W2 - " + str(self.w[2])) 
+    def  Corrigir(self,vet,corr):#variacao ajuste 
+        self.w[0] += self.variation * corr
+        self.w[1] += self.variation * corr * vet[0]
+        self.w[2] += self.variation * corr * vet[1]
+       
 
-
-p = Perceptron([random.uniform(-1,1),random.uniform(-1,1),random.uniform(-1,1)],0,0.1)
+#p= Perceptron([random.uniform(-1,1),random.uniform(-1,1),random.uniform(-1,1)],0,0.1)
+#p= Perceptron([0.3353116356850554, -0.5594348883530098, -0.256859859593127],0,0.05)
 #-3.63 5.61 2.10
 #p = Perceptron([2.10,-3.63,5.61],0,0.1)
-#p = Perceptron([0.7,0.7,-1.3],0,0.1)
-epoch = 100
+p = Perceptron([0.7,0.7,-1.3],0,0.1)
+print("Weight Inicial = " + str(p.w))
+
+epoch = 0
 resposta = 1
 erro = 100
-while (resposta != 0) and epoch>0 and erro > 5:
-    resposta = p.TreinarEpoca(data)
-    epoch-=1
-    erro = (resposta/len(data))*100
-    print("---------------------------------------------------")
-    print("Erros/Total" + str(resposta) + "/" +str(len(data)) + " = " + str(erro)+"%")
-    print("---------------------------------------------------")
-    continue
+file_object  = open("erro.txt", "w") 
+while epoch<10 and erro > 1:
+    print("epoch - " + str(epoch))  
+    erro = 0
+    for d in data:
+        erro += abs(p.Treinar(d))
+
+    erro = (erro/len(data))*100
+    epoch +=1
+    print("-"*90)
+    print("Weight Final = " + str(p.w))
+    file_object.write("Weight Final = " + str(p.w)+"%\n")
+    print("erro = " + str(erro))
+    file_object.write(str(epoch) +" - "+str(erro)+"%\n")
+    print("-"*90)
+
+file_object.close()
 
 xp1 = ((-1)*p.w[0]/p.w[1] )
 xp2 = ((-1)*p.w[0]/p.w[2] )
