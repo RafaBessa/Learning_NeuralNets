@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
+##this code make a linear regression in a data set with two type of "flowers", with points x,y. This linear regression is made through a
+#Perceptron without a activation function 
+
 data = np.loadtxt(fname="irisData.txt")
 print(len(data))
 x1 = []
